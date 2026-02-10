@@ -1,17 +1,30 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 
+interface NavEntry {
+  title: string;
+  href: string;
+}
+
 interface Props {
   title: string;
   date: string;
   description: string;
   tags: string[];
   collection: string;
+  prevEntry?: NavEntry | null;
+  nextEntry?: NavEntry | null;
 }
 
-const { title, date, description, tags, collection } = Astro.props;
+const { title, date, description, tags, collection, prevEntry, nextEntry } = Astro.props;
 const isLenguaje = collection === 'lenguaje';
 const base = import.meta.env.BASE_URL;
+
+// Helper to create tag filter URL
+function getTagUrl(tag: string) {
+  const baseWithSlash = base.endsWith('/') ? base : `${base}/`;
+  return `${baseWithSlash}${collection}/?tag=${encodeURIComponent(tag)}`;
+}
 ---
 
 <BaseLayout title={`${title} - Becoming Aeon`} description={description} compact particleCount={60}>
@@ -25,12 +38,101 @@ const base = import.meta.env.BASE_URL;
       </div>
 
       <div class:list={['article-tags', { lenguaje: isLenguaje }]}>
-        {tags.map((tag) => <span class="tag">{tag}</span>)}
+        {tags.map((tag) => (
+          <a href={getTagUrl(tag)} class="tag">{tag}</a>
+        ))}
       </div>
 
       <nav class="entry-nav">
-        <a href={base}>← Volver al inicio</a>
+        <div class="nav-controls">
+          {prevEntry ? (
+            <a href={prevEntry.href} class="nav-prev" title={prevEntry.title}>
+              ← Anterior
+            </a>
+          ) : (
+            <span class="nav-disabled">← Anterior</span>
+          )}
+          
+          <a href={base} class="nav-home">Inicio</a>
+          
+          {nextEntry ? (
+            <a href={nextEntry.href} class="nav-next" title={nextEntry.title}>
+              Siguiente →
+            </a>
+          ) : (
+            <span class="nav-disabled">Siguiente →</span>
+          )}
+        </div>
       </nav>
     </article>
   </div>
 </BaseLayout>
+
+<style>
+  .nav-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(100, 255, 218, 0.1);
+  }
+
+  .nav-prev,
+  .nav-next,
+  .nav-home {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+  }
+
+  .nav-prev,
+  .nav-next {
+    background: rgba(100, 255, 218, 0.05);
+    border: 1px solid rgba(100, 255, 218, 0.2);
+    color: #64ffda;
+  }
+
+  .nav-prev:hover,
+  .nav-next:hover {
+    background: rgba(100, 255, 218, 0.1);
+    border-color: #64ffda;
+    transform: translateY(-2px);
+  }
+
+  .nav-home {
+    background: rgba(255, 100, 218, 0.05);
+    border: 1px solid rgba(255, 100, 218, 0.2);
+    color: #ff64da;
+  }
+
+  .nav-home:hover {
+    background: rgba(255, 100, 218, 0.1);
+    border-color: #ff64da;
+    transform: translateY(-2px);
+  }
+
+  .nav-disabled {
+    padding: 0.5rem 1rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.95rem;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 600px) {
+    .nav-controls {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-prev,
+    .nav-next,
+    .nav-home {
+      width: 100%;
+      text-align: center;
+    }
+  }
+</style>

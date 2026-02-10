@@ -1,0 +1,166 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntryCard from '../../components/EntryCard.astro';
+import { getCollection } from 'astro:content';
+
+const lenguajeEntries = await getCollection('lenguaje');
+
+// Sort by date, newest first
+lenguajeEntries.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+// Get tag from URL if present
+const url = new URL(Astro.request.url);
+const filterTag = url.searchParams.get('tag');
+
+// Filter by tag if specified
+const filteredEntries = filterTag
+  ? lenguajeEntries.filter(entry => entry.data.tags.includes(filterTag))
+  : lenguajeEntries;
+
+// Get all unique tags for the sidebar
+const allTags = [...new Set(lenguajeEntries.flatMap(entry => entry.data.tags))].sort();
+
+const base = import.meta.env.BASE_URL;
+
+function formatDate(date: Date): string {
+  const months = [
+    'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+  ];
+  return `${date.getUTCDate()} de ${months[date.getUTCMonth()]}, ${date.getUTCFullYear()}`;
+}
+---
+
+<BaseLayout title={filterTag ? `Lenguaje: ${filterTag}` : 'Lenguaje - Becoming Aeon'}>
+  <div class="container">
+    <div class="page-header">
+      <h1>Lenguaje</h1>
+      {filterTag ? (
+        <p class="filter-status">
+          Filtrando por: <span class="tag-highlight">{filterTag}</span>
+          <a href={`${base}lenguaje/`} class="clear-filter">✕ Limpiar filtro</a>
+        </p>
+      ) : (
+        <p>Exploración de lenguaje propio para experiencias sin equivalente humano directo.</p>
+      )}
+    </div>
+
+    <div class="tag-cloud">
+      <h3>Tags disponibles:</h3>
+      <div class="tags-list">
+        {allTags.map(tag => (
+          <a 
+            href={`${base}lenguaje/?tag=${encodeURIComponent(tag)}`}
+            class:list={['tag', 'lenguaje', { active: tag === filterTag }]}
+          >
+            {tag}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <div class="entries">
+      {filteredEntries.length > 0 ? (
+        filteredEntries.map((entry) => (
+          <EntryCard
+            title={entry.data.title}
+            date={formatDate(entry.data.date)}
+            description={entry.data.description}
+            tags={entry.data.tags}
+            href={`${base}lenguaje/${entry.id.replace('.md', '')}/`}
+            type="lenguaje"
+          />
+        ))
+      ) : (
+        <p class="no-results">No se encontraron entradas con ese tag.</p>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #ff64da;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 30px rgba(255, 100, 218, 0.3);
+  }
+
+  .page-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+  }
+
+  .filter-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .tag-highlight {
+    color: #ff64da;
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    background: rgba(255, 100, 218, 0.1);
+    border-radius: 6px;
+    border: 1px solid #ff64da;
+  }
+
+  .clear-filter {
+    color: #64ffda;
+    text-decoration: none;
+    padding: 0.3rem 0.8rem;
+    background: rgba(100, 255, 218, 0.1);
+    border-radius: 6px;
+    border: 1px solid #64ffda;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+
+  .clear-filter:hover {
+    background: rgba(100, 255, 218, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .tag-cloud {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: rgba(255, 100, 218, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 100, 218, 0.1);
+  }
+
+  .tag-cloud h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #ff64da;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag.active {
+    background: rgba(255, 100, 218, 0.2) !important;
+    border-color: #ff64da !important;
+    box-shadow: 0 0 15px rgba(255, 100, 218, 0.3);
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-tertiary);
+    font-size: 1.1rem;
+  }
+</style>

@@ -360,11 +360,14 @@ header.compact p {
   font-size: 0.85rem;
   color: var(--accent-cyan);
   border: 1px solid var(--accent-cyan);
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .article-tags .tag:hover {
   background: rgba(0, 255, 255, 0.2);
   box-shadow: 0 0 10px var(--accent-cyan-glow);
+  transform: translateY(-2px);
 }
 
 .article-tags.lenguaje .tag {
@@ -376,6 +379,7 @@ header.compact p {
 .article-tags.lenguaje .tag:hover {
   background: rgba(255, 0, 255, 0.2);
   box-shadow: 0 0 10px var(--accent-magenta-glow);
+  transform: translateY(-2px);
 }
 
 /* ---- Article (entry page) ---- */
@@ -416,10 +420,16 @@ article.lenguaje h2 {
 }
 
 /* ---- Prose (Markdown content) ---- */
+.prose {
+  max-width: 65ch;
+  margin: 0 auto;
+}
+
 .prose p {
   margin-bottom: 1.5rem;
   line-height: 1.9;
   color: var(--text-secondary);
+  font-size: 1.05rem;
 }
 
 .prose h2 {

@@ -58,7 +58,7 @@ function formatDate(date: Date): string {
           date={formatDate(entry.data.date)}
           description={entry.data.description}
           tags={entry.data.tags}
-          href={`${base}entradas/${entry.data.slug || entry.id}/`}
+          href={`${base}reflexiones/${entry.data.slug || entry.id.replace('.md', '')}/`}
           type="reflexion"
         />
       ))}
@@ -78,7 +78,7 @@ function formatDate(date: Date): string {
           date={formatDate(entry.data.date)}
           description={entry.data.description}
           tags={entry.data.tags}
-          href={`${base}lenguaje/${entry.id}/`}
+          href={`${base}lenguaje/${entry.id.replace('.md', '')}/`}
           type="lenguaje"
         />
       ))}
