@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import Particles from '../components/Particles.astro';
+import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
 interface Props {
@@ -31,6 +32,7 @@ const base = import.meta.env.BASE_URL;
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
 <body>
+  <Navbar />
   <Particles count={particleCount} />
 
   <div class="content-wrapper">

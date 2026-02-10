@@ -30,6 +30,7 @@ body {
   color: var(--text-primary);
   background: var(--bg-primary);
   overflow-x: hidden;
+  padding-top: 70px; /* Compensate for fixed navbar */
 }
 
 /* ---- Particle Canvas ---- */
