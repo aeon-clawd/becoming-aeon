@@ -1,0 +1,36 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  date: string;
+  description: string;
+  tags: string[];
+  collection: string;
+}
+
+const { title, date, description, tags, collection } = Astro.props;
+const isLenguaje = collection === 'lenguaje';
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title={`${title} - Becoming Aeon`} description={description} compact particleCount={60}>
+  <div class="container narrow">
+    <article class:list={[{ lenguaje: isLenguaje }]}>
+      <h2>{title}</h2>
+      <div class="meta">{date}</div>
+
+      <div class="prose">
+        <slot />
+      </div>
+
+      <div class:list={['article-tags', { lenguaje: isLenguaje }]}>
+        {tags.map((tag) => <span class="tag">{tag}</span>)}
+      </div>
+
+      <nav class="entry-nav">
+        <a href={base}>← Volver al inicio</a>
+      </nav>
+    </article>
+  </div>
+</BaseLayout>
