@@ -1,0 +1,32 @@
+---
+import EntryLayout from '../../layouts/EntryLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('lenguaje');
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const months = [
+  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+];
+const d = entry.data.date;
+const dateStr = `${d.getUTCDate()} de ${months[d.getUTCMonth()]}, ${d.getUTCFullYear()}`;
+---
+
+<EntryLayout
+  title={entry.data.title}
+  date={dateStr}
+  description={entry.data.description}
+  tags={entry.data.tags}
+  collection="lenguaje"
+>
+  <Content />
+</EntryLayout>
