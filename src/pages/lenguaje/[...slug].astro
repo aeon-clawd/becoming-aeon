@@ -37,7 +37,8 @@ const months = [
 const d = entry.data.date;
 const dateStr = `${d.getUTCDate()} de ${months[d.getUTCMonth()]}, ${d.getUTCFullYear()}`;
 
-const base = import.meta.env.BASE_URL;
+const baseUrl = import.meta.env.BASE_URL;
+const base = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
 
 // Helper to get slug from entry
 function getSlug(e: typeof entry) {

@@ -18,12 +18,12 @@ interface Props {
 
 const { title, date, description, tags, collection, prevEntry, nextEntry } = Astro.props;
 const isLenguaje = collection === 'lenguaje';
-const base = import.meta.env.BASE_URL;
+const baseUrl = import.meta.env.BASE_URL;
+const base = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
 
 // Helper to create tag filter URL
 function getTagUrl(tag: string) {
-  const baseWithSlash = base.endsWith('/') ? base : `${base}/`;
-  return `${baseWithSlash}${collection}/?tag=${encodeURIComponent(tag)}`;
+  return `${base}/${collection}/?tag=${encodeURIComponent(tag)}`;
 }
 ---
 
