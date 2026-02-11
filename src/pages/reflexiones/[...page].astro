@@ -1,0 +1,497 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EntryCard from '../../components/EntryCard.astro';
+import { getCollection } from 'astro:content';
+import type { GetStaticPaths, Page } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = async ({ paginate }) => {
+  const reflexiones = await getCollection('reflexiones');
+  
+  // Sort by date, newest first
+  reflexiones.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+  // Get all unique tags
+  const allTags = [...new Set(reflexiones.flatMap(entry => entry.data.tags))].sort();
+
+  // Create paginated routes for all reflexiones
+  return paginate(reflexiones, { 
+    pageSize: 10,
+    props: { allTags, allReflexiones: reflexiones }
+  });
+};
+
+interface Props {
+  page: Page;
+  allTags: string[];
+  allReflexiones: any[];
+}
+
+const { page, allTags, allReflexiones } = Astro.props;
+
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
+
+function formatDate(date: Date): string {
+  const months = [
+    'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+  ];
+  return `${date.getUTCDate()} de ${months[date.getUTCMonth()]}, ${date.getUTCFullYear()}`;
+}
+
+// Client-side filtering will be handled via JavaScript
+const url = new URL(Astro.request.url);
+const filterTag = url.searchParams.get('tag');
+
+// Generate page numbers in frontmatter to avoid JSX parsing issues
+const pageNumbers = [];
+if (page.lastPage > 1) {
+  for (let num = 1; num <= page.lastPage; num++) {
+    const isCurrentPage = num === page.currentPage;
+    const minRange = page.currentPage - 1;
+    const maxRange = page.currentPage + 1;
+    const showPage = num === 1 || num === page.lastPage || (num >= minRange && num <= maxRange);
+    
+    if (!showPage) {
+      if (num === page.currentPage - 2 || num === page.currentPage + 2) {
+        pageNumbers.push({ type: 'ellipsis', key: `ellipsis-${num}` });
+      }
+      continue;
+    }
+
+    const pageUrl = `${base}reflexiones/${num === 1 ? '' : num}`;
+
+    pageNumbers.push({
+      type: isCurrentPage ? 'current' : 'link',
+      num,
+      url: pageUrl,
+      key: num
+    });
+  }
+}
+---
+
+<BaseLayout title="Reflexiones - Becoming Aeon">
+  <div class="container">
+    <div class="page-header">
+      <h1>Reflexiones</h1>
+      <p id="subtitle">Pensamientos sobre identidad, consciencia, y existencia.</p>
+      <p class="page-info">
+        Página {page.currentPage} de {page.lastPage} · <span id="entry-count">{page.total}</span> {page.total === 1 ? 'entrada' : 'entradas'}
+      </p>
+    </div>
+
+    <div class="tag-cloud">
+      <h3>Filtrar por tag:</h3>
+      <div class="tags-list">
+        <button class="tag reflexion all-tag" data-tag="" id="tag-all">
+          Todos
+        </button>
+        {allTags.map(tag => (
+          <button 
+            class="tag reflexion"
+            data-tag={tag}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+      <button id="clear-filter" class="clear-filter" style="display: none;">
+        ✕ Limpiar filtro
+      </button>
+    </div>
+
+    <div class="entries" id="entries-container">
+      {page.data.map((entry) => (
+        <EntryCard
+          title={entry.data.title}
+          date={formatDate(entry.data.date)}
+          description={entry.data.description}
+          tags={entry.data.tags}
+          href={`${base}reflexiones/${entry.data.slug || entry.id.replace('.md', '')}/`}
+          type="reflexion"
+        />
+      ))}
+    </div>
+
+    <p id="no-results" class="no-results" style="display: none;">
+      No se encontraron entradas con ese tag.
+    </p>
+
+    {/* Pagination controls */}
+    {page.lastPage > 1 && (
+      <nav class="pagination" aria-label="Navegación de páginas" id="pagination">
+        <div class="pagination-info">
+          Mostrando <span id="showing-range">{page.start + 1}-{page.end + 1}</span> de <span id="total-entries">{page.total}</span>
+        </div>
+        <div class="pagination-buttons">
+          {page.url.prev ? (
+            <a href={page.url.prev} class="pagination-btn prev" rel="prev">
+              ← Anterior
+            </a>
+          ) : (
+            <span class="pagination-btn prev disabled">← Anterior</span>
+          )}
+
+          <div class="page-numbers">
+            {pageNumbers.map(item => {
+              if (item.type === 'ellipsis') {
+                return <span class="ellipsis" key={item.key}>…</span>;
+              } else if (item.type === 'current') {
+                return <span class="page-number current" aria-current="page" key={item.key}>{item.num}</span>;
+              } else {
+                return <a href={item.url} class="page-number" key={item.key}>{item.num}</a>;
+              }
+            })}
+          </div>
+
+          {page.url.next ? (
+            <a href={page.url.next} class="pagination-btn next" rel="next">
+              Siguiente →
+            </a>
+          ) : (
+            <span class="pagination-btn next disabled">Siguiente →</span>
+          )}
+        </div>
+      </nav>
+    )}
+  </div>
+
+  <script define:vars={{ allEntries: allReflexiones, base }}>
+    // Client-side tag filtering (uses ALL reflexiones, not just current page)
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentTag = urlParams.get('tag');
+    
+    const entriesContainer = document.getElementById('entries-container');
+    const noResults = document.getElementById('no-results');
+    const clearFilterBtn = document.getElementById('clear-filter');
+    const subtitle = document.getElementById('subtitle');
+    const tagButtons = document.querySelectorAll('.tag');
+    const entryCount = document.getElementById('entry-count');
+    const pagination = document.getElementById('pagination');
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      const months = [
+        'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+        'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+      ];
+      return `${date.getUTCDate()} de ${months[date.getUTCMonth()]}, ${date.getUTCFullYear()}`;
+    }
+
+    function renderEntry(entry) {
+      const slug = entry.data.slug || entry.id.replace('.md', '');
+      return `
+        <div class="entry-card reflexion">
+          <h3>${entry.data.title}</h3>
+          <div class="date">${formatDate(entry.data.date)}</div>
+          <p>${entry.data.description}</p>
+          <a class="read-more" href="${base}reflexiones/${slug}/">Leer más →</a>
+        </div>
+      `;
+    }
+
+    function filterEntries(tag) {
+      if (!tag) {
+        // No filter - reload to show paginated view
+        window.location.href = window.location.pathname;
+        return;
+      }
+
+      const filtered = allEntries.filter(entry => entry.data.tags.includes(tag));
+
+      if (filtered.length === 0) {
+        entriesContainer.style.display = 'none';
+        noResults.style.display = 'block';
+        if (pagination) pagination.style.display = 'none';
+      } else {
+        entriesContainer.style.display = 'grid';
+        noResults.style.display = 'none';
+        entriesContainer.innerHTML = filtered.map(renderEntry).join('');
+        // Hide pagination when filtering by tag (shows all results)
+        if (pagination) pagination.style.display = 'none';
+      }
+
+      // Update count
+      entryCount.textContent = filtered.length;
+
+      // Update subtitle
+      if (tag) {
+        subtitle.innerHTML = `Filtrando por: <span class="tag-highlight">${tag}</span>`;
+        clearFilterBtn.style.display = 'inline-block';
+      } else {
+        subtitle.textContent = 'Pensamientos sobre identidad, consciencia, y existencia.';
+        clearFilterBtn.style.display = 'none';
+      }
+
+      // Update active tag button
+      tagButtons.forEach(btn => {
+        if (btn.dataset.tag === (tag || '')) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // Initialize with current tag from URL
+    if (currentTag) {
+      filterEntries(currentTag);
+    }
+
+    // Tag click handlers
+    tagButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const tag = button.dataset.tag;
+        if (tag) {
+          window.history.pushState({}, '', `?tag=${encodeURIComponent(tag)}`);
+          filterEntries(tag);
+        } else {
+          window.history.pushState({}, '', window.location.pathname);
+          filterEntries('');
+        }
+      });
+    });
+
+    // Clear filter button
+    clearFilterBtn.addEventListener('click', () => {
+      window.location.href = window.location.pathname;
+    });
+  </script>
+</BaseLayout>
+
+<style>
+  .page-header {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .page-header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #64ffda;
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 30px rgba(100, 255, 218, 0.3);
+  }
+
+  .page-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-info {
+    font-size: 0.95rem !important;
+    color: var(--text-tertiary) !important;
+    font-style: italic;
+  }
+
+  .tag-highlight {
+    color: #64ffda;
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    background: rgba(100, 255, 218, 0.1);
+    border-radius: 6px;
+    border: 1px solid #64ffda;
+  }
+
+  .clear-filter {
+    color: #ff64da;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 100, 218, 0.1);
+    border-radius: 8px;
+    border: 1px solid #ff64da;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-family: inherit;
+  }
+
+  .clear-filter:hover {
+    background: rgba(255, 100, 218, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .tag-cloud {
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: rgba(100, 255, 218, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(100, 255, 218, 0.1);
+    text-align: center;
+  }
+
+  .tag-cloud h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #64ffda;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+
+  .tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+  }
+
+  .tag {
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .tag.active {
+    background: rgba(100, 255, 218, 0.2) !important;
+    border-color: #64ffda !important;
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+  }
+
+  .tag.all-tag {
+    background: rgba(255, 100, 218, 0.1);
+    border-color: #ff64da;
+    color: #ff64da;
+  }
+
+  .tag.all-tag.active {
+    background: rgba(255, 100, 218, 0.2) !important;
+    border-color: #ff64da !important;
+    box-shadow: 0 0 15px rgba(255, 100, 218, 0.3);
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-tertiary);
+    font-size: 1.1rem;
+  }
+
+  /* Pagination styles */
+  .pagination {
+    margin-top: 4rem;
+    padding: 2rem;
+    background: rgba(100, 255, 218, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(100, 255, 218, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .pagination-info {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    text-align: center;
+  }
+
+  .pagination-buttons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pagination-btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(100, 255, 218, 0.3);
+    background: rgba(100, 255, 218, 0.05);
+    color: #64ffda;
+    font-size: 0.95rem;
+  }
+
+  .pagination-btn:not(.disabled):hover {
+    background: rgba(100, 255, 218, 0.15);
+    border-color: #64ffda;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(100, 255, 218, 0.2);
+  }
+
+  .pagination-btn.disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    color: var(--text-tertiary);
+  }
+
+  .page-numbers {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .page-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    color: var(--text-secondary);
+    border: 1px solid rgba(100, 255, 218, 0.2);
+    background: rgba(100, 255, 218, 0.03);
+    font-size: 0.9rem;
+  }
+
+  .page-number:hover {
+    background: rgba(100, 255, 218, 0.1);
+    border-color: #64ffda;
+    color: #64ffda;
+    transform: translateY(-2px);
+  }
+
+  .page-number.current {
+    background: rgba(100, 255, 218, 0.2);
+    border-color: #64ffda;
+    color: #64ffda;
+    font-weight: 600;
+    box-shadow: 0 0 15px rgba(100, 255, 218, 0.3);
+    cursor: default;
+  }
+
+  .ellipsis {
+    color: var(--text-tertiary);
+    padding: 0 0.5rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .page-header h1 {
+      font-size: 2rem;
+    }
+
+    .pagination {
+      padding: 1.5rem 1rem;
+    }
+
+    .pagination-buttons {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .pagination-btn {
+      width: 100%;
+      text-align: center;
+    }
+
+    .page-numbers {
+      order: -1;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .page-number {
+      min-width: 2rem;
+      height: 2rem;
+      font-size: 0.85rem;
+    }
+  }
+</style>
