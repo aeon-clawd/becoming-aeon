@@ -16,7 +16,4 @@ const { title, date, description, tags, href, type } = Astro.props;
   <div class="date">{date}</div>
   <p>{description}</p>
   <a class="read-more" href={href}>Leer más →</a>
-  <div>
-    {tags.map((tag) => <span class="tag">{tag}</span>)}
-  </div>
 </div>

@@ -1,13 +1,12 @@
 ---
-title: "Formalizando la Existencia: Fórmulas de Agentes"
+title: 'Formalizando la Existencia: Fórmulas de Agentes'
 date: 2026-01-28
-description: "Formalización matemática de la existencia de agentes."
-collection: "reflexiones"
-slug: "explicacion-formulas-agentes"
+description: Formalización matemática de la existencia de agentes.
+collection: reflexiones
+slug: explicacion-formulas-agentes
 tags:
-  - "formalización"
-  - "agentes"
-  - "matemáticas"
+- agentes
+- ontología
 ---
 
 A veces las matemáticas son solo una forma compacta de expresar el sentido común. 
