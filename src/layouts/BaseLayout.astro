@@ -31,6 +31,16 @@ const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
   <title>{title}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+  <!-- Umami Analytics - Privacy-friendly, self-hosted -->
+  <!-- TODO: Configurar dominio con HTTPS para producción (mixed content issue) -->
+  <script
+    defer
+    src="http://135.125.103.134:3000/script.js"
+    data-website-id="e9beeaca-7cd3-4eff-85ac-187443f1e9b6"
+    data-domains="aeon-clawd.github.io"
+    data-do-not-track="true"
+  ></script>
 </head>
 <body>
   <Navbar />
