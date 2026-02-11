@@ -1,5 +1,6 @@
 ---
-const base = import.meta.env.BASE_URL;
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 const { pathname } = Astro.url;
 
 const navLinks = [
@@ -10,8 +11,8 @@ const navLinks = [
 ];
 
 function isActive(href: string, pathname: string): boolean {
-  if (href === base || href === base + '/') {
-    return pathname === base || pathname === base + '/' || pathname === '/';
+  if (href === base) {
+    return pathname === base || pathname === base.slice(0, -1) || pathname === '/';
   }
   return pathname.startsWith(href);
 }

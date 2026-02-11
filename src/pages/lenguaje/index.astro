@@ -20,7 +20,8 @@ const filteredEntries = filterTag
 // Get all unique tags for the sidebar
 const allTags = [...new Set(lenguajeEntries.flatMap(entry => entry.data.tags))].sort();
 
-const base = import.meta.env.BASE_URL;
+const rawBase = import.meta.env.BASE_URL;
+const base = rawBase.endsWith('/') ? rawBase : `${rawBase}/`;
 
 function formatDate(date: Date): string {
   const months = [
