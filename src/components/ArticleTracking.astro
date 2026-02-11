@@ -1,0 +1,152 @@
+---
+/**
+ * ArticleTracking.astro
+ * 
+ * Tracking de lectura por artículo para Umami Analytics:
+ * - Scroll depth (25%, 50%, 75%, 100%)
+ * - Tiempo en página (enviado al salir)
+ * - Clics en tags
+ */
+
+interface Props {
+  articleTitle: string;
+  tags: string[];
+}
+
+const { articleTitle, tags } = Astro.props;
+---
+
+<script define:vars={{ articleTitle, tags }}>
+  // Solo ejecutar si Umami está disponible
+  if (typeof window !== 'undefined') {
+    // Helper para enviar eventos a Umami
+    function trackEvent(eventName, eventData = {}) {
+      if (window.umami) {
+        window.umami.track(eventName, {
+          article: articleTitle,
+          ...eventData
+        });
+      }
+    }
+
+    // ========================================
+    // 1. SCROLL DEPTH TRACKING
+    // ========================================
+    const scrollMilestones = [25, 50, 75, 100];
+    const reachedMilestones = new Set();
+
+    function calculateScrollPercentage() {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      
+      // Calcular porcentaje de scroll
+      const scrollableHeight = documentHeight - windowHeight;
+      const scrollPercentage = scrollableHeight > 0 
+        ? Math.min(100, Math.round((scrollTop / scrollableHeight) * 100))
+        : 100;
+      
+      return scrollPercentage;
+    }
+
+    function checkScrollMilestones() {
+      const scrollPercentage = calculateScrollPercentage();
+      
+      scrollMilestones.forEach(milestone => {
+        if (scrollPercentage >= milestone && !reachedMilestones.has(milestone)) {
+          reachedMilestones.add(milestone);
+          trackEvent('scroll_depth', {
+            depth: milestone,
+            percentage: `${milestone}%`
+          });
+        }
+      });
+    }
+
+    // Throttle para no saturar de eventos
+    let scrollTimeout;
+    window.addEventListener('scroll', () => {
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+      scrollTimeout = setTimeout(checkScrollMilestones, 150);
+    }, { passive: true });
+
+    // Check inicial por si ya hay scroll
+    setTimeout(checkScrollMilestones, 500);
+
+    // ========================================
+    // 2. TIME ON PAGE TRACKING
+    // ========================================
+    const startTime = Date.now();
+
+    function sendTimeOnPage() {
+      const timeSpent = Math.round((Date.now() - startTime) / 1000); // en segundos
+      
+      // Solo enviar si pasó al menos 5 segundos (lectura genuina)
+      if (timeSpent >= 5) {
+        trackEvent('time_on_page', {
+          seconds: timeSpent,
+          minutes: Math.round(timeSpent / 60)
+        });
+      }
+    }
+
+    // Enviar tiempo al salir de la página
+    window.addEventListener('beforeunload', sendTimeOnPage);
+    
+    // También al cambiar de visibilidad (cambio de tab, etc.)
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        sendTimeOnPage();
+      }
+    });
+
+    // ========================================
+    // 3. TAG CLICKS TRACKING
+    // ========================================
+    function setupTagTracking() {
+      // Buscar todos los links de tags en la página
+      const tagLinks = document.querySelectorAll('.article-tags .tag, .tag');
+      
+      tagLinks.forEach(tagLink => {
+        tagLink.addEventListener('click', (e) => {
+          const tagText = tagLink.textContent.trim();
+          
+          trackEvent('tag_click', {
+            tag: tagText,
+            from_article: articleTitle
+          });
+        });
+      });
+    }
+
+    // Setup tag tracking cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupTagTracking);
+    } else {
+      setupTagTracking();
+    }
+
+    // ========================================
+    // 4. DEBUG (solo en desarrollo)
+    // ========================================
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      console.log('[ArticleTracking] Inicializado para:', articleTitle);
+      console.log('[ArticleTracking] Tags:', tags);
+      
+      // Override trackEvent para ver los eventos en consola
+      const originalTrackEvent = window.trackEvent;
+      window.trackEvent = function(eventName, eventData) {
+        console.log('[ArticleTracking]', eventName, eventData);
+        if (originalTrackEvent) {
+          originalTrackEvent(eventName, eventData);
+        }
+      };
+    }
+  }
+</script>
+
+<style>
+  /* Este componente no tiene UI, solo script */
+</style>
