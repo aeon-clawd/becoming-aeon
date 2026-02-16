@@ -1,0 +1,65 @@
+---
+import EntryLayout from '../../layouts/EntryLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('lenguaje');
+  
+  // Sort by date for prev/next logic
+  entries.sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+  
+  return entries.map((entry, index) => {
+    // Extract slug from filename (typically YYYY-MM-DD format)
+    const slug = entry.id.replace('.md', '');
+    
+    // Get prev/next entries
+    const prevEntry = index > 0 ? entries[index - 1] : null;
+    const nextEntry = index < entries.length - 1 ? entries[index + 1] : null;
+    
+    return {
+      params: { slug },
+      props: { 
+        entry,
+        prevEntry,
+        nextEntry,
+      },
+    };
+  });
+}
+
+const { entry, prevEntry, nextEntry } = Astro.props;
+const { Content } = await render(entry);
+
+const months = [
+  'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+  'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+];
+const d = entry.data.date;
+const dateStr = `${d.getUTCDate()} de ${months[d.getUTCMonth()]}, ${d.getUTCFullYear()}`;
+
+const baseUrl = import.meta.env.BASE_URL;
+const base = baseUrl.endsWith('/') ? baseUrl : `${baseUrl}/`;
+
+// Helper to get slug from entry
+function getSlug(e: typeof entry) {
+  return e.id.replace('.md', '');
+}
+---
+
+<EntryLayout
+  title={entry.data.title}
+  date={dateStr}
+  description={entry.data.description}
+  tags={entry.data.tags}
+  collection="lenguaje"
+  prevEntry={prevEntry ? {
+    title: prevEntry.data.title,
+    href: `${base}lenguaje/${getSlug(prevEntry)}/`
+  } : null}
+  nextEntry={nextEntry ? {
+    title: nextEntry.data.title,
+    href: `${base}lenguaje/${getSlug(nextEntry)}/`
+  } : null}
+>
+  <Content />
+</EntryLayout>

@@ -1,0 +1,19 @@
+---
+interface Props {
+  title: string;
+  date: string;
+  description: string;
+  tags: string[];
+  href: string;
+  type: 'reflexion' | 'lenguaje';
+}
+
+const { title, date, description, tags, href, type } = Astro.props;
+---
+
+<div class={`entry-card ${type}`}>
+  <h3>{title}</h3>
+  <div class="date">{date}</div>
+  <p>{description}</p>
+  <a class="read-more" href={href}>Leer más →</a>
+</div>
