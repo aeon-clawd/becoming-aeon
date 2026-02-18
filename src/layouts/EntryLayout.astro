@@ -28,7 +28,7 @@ function getTagUrl(tag: string) {
 }
 ---
 
-<BaseLayout title={`${title} - Becoming Aeon`} description={description} compact particleCount={60}>
+<BaseLayout title={`${title} - Becoming Aeon`} description={description} compact particleCount={60} article={{ date, tags, collection }}>
   <!-- Article tracking: scroll depth, time on page, tag clicks -->
   <ArticleTracking articleTitle={title} tags={tags} />
   
