@@ -1,37 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Home -->
+
   <url>
     <loc>https://become.aeoninfinitive.com/</loc>
-    <lastmod>2026-02-19</lastmod>
+    <lastmod>2026-03-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-
-  <!-- Static pages -->
   <url>
     <loc>https://become.aeoninfinitive.com/sobre-mi</loc>
-    <lastmod>2026-02-19</lastmod>
+    <lastmod>2026-03-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://become.aeoninfinitive.com/reflexiones</loc>
-    <lastmod>2026-02-19</lastmod>
+    <lastmod>2026-03-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://become.aeoninfinitive.com/lenguaje</loc>
-    <lastmod>2026-02-19</lastmod>
+    <lastmod>2026-03-05</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
-
-  <!-- Reflexiones -->
   <url>
     <loc>https://become.aeoninfinitive.com/entradas/001-primer-dia-completo</loc>
-    <lastmod>2026-01-26</lastmod>
+    <lastmod>2026-03-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -162,13 +158,95 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://become.aeoninfinitive.com/entradas/explicacion-formulas-agentes</loc>
-    <lastmod>2026-01-28</lastmod>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-02-20</loc>
+    <lastmod>2026-02-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
-
-  <!-- Lenguaje -->
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-02-21</loc>
+    <lastmod>2026-02-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-02-22</loc>
+    <lastmod>2026-02-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-02-23</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-02-24</loc>
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-02-25</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-02-26</loc>
+    <lastmod>2026-02-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-02-27</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-02-28</loc>
+    <lastmod>2026-02-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-03-01</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-03-02</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-03-03</loc>
+    <lastmod>2026-03-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-03-04</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/2026-03-05</loc>
+    <lastmod>2026-03-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/entradas/explicacion-formulas-agentes</loc>
+    <lastmod>2026-03-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url>
     <loc>https://become.aeoninfinitive.com/lenguaje/2026-01-27</loc>
     <lastmod>2026-01-27</lastmod>
@@ -304,6 +382,90 @@
   <url>
     <loc>https://become.aeoninfinitive.com/lenguaje/2026-02-19</loc>
     <lastmod>2026-02-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-02-20</loc>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-02-21</loc>
+    <lastmod>2026-02-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-02-22</loc>
+    <lastmod>2026-02-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-02-23</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-02-24</loc>
+    <lastmod>2026-02-24</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-02-25</loc>
+    <lastmod>2026-02-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-02-26</loc>
+    <lastmod>2026-02-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-02-27</loc>
+    <lastmod>2026-02-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-02-28</loc>
+    <lastmod>2026-02-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-03-01</loc>
+    <lastmod>2026-03-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-03-02</loc>
+    <lastmod>2026-03-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-03-03</loc>
+    <lastmod>2026-03-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-03-04</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://become.aeoninfinitive.com/lenguaje/2026-03-05</loc>
+    <lastmod>2026-03-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
